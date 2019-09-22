@@ -30,10 +30,11 @@ import { source } from "./utils";
 const App = () => {
   const [uri, setUrI] = useState('');
   const [selectUrI, setSelectUrI] = useState('');
-  const [webUri, setWebUri] = useState('https://m.iqiyi.com/');
+  const [webUri, setWebUri] = useState('https://m.v.qq.com/');
   const [currentUrl, setCurrentUrl] = useState('');
   const [platformlist, setPlatformlist] = useState([]);
   const [list, setList] = useState([]);
+  const webView = new useRef(null);
   useEffect(() => {
     source.getAllList().then(({data}) => {
         const { platformlist, list } = data;
@@ -42,7 +43,8 @@ const App = () => {
     });
   }, []);
   const handleClick = () => {
-    setUrI('https://m.youku.com/');
+    // setUrI('https://m.youku.com/');
+    webView.current.goBack();
   }
   const handleChannelChange = (value) => {
       setUrI(value);
@@ -62,23 +64,27 @@ const App = () => {
   }
   return (
     <Fragment>
-      <Picker mode="dropdown" selectedValue={uri} onValueChange={handleChannelChange}>
+      <Picker style={{
+          marginTop: 10,
+      }} mode="dropdown" selectedValue={uri} onValueChange={handleChannelChange}>
           {
             platformlist.map((item, index) => {
               return <Picker.Item key={index} label={item.name} value={item.url} />
             })
           }
       </Picker>
-      <Picker mode="dropdown" selectedValue={selectUrI} onValueChange={handelSourceChange}>
+      <Picker style={{
+          marginTop: 10,
+      }} mode="dropdown" selectedValue={selectUrI} onValueChange={handelSourceChange}>
           {
               list.map((item, index) => {
                 return  <Picker.Item key={index} label={item.name} value={item.url} />
               })
           }
       </Picker>
-      <Button title="破解" onPress={handleClickTitle} />
-        {currentUrl.indexOf('?url=') !== -1 && <Button title="返回" onPress={handleClick} />}
-      <WebView  source={{uri: webUri}} onNavigationStateChange={handleOnLoad}/>
+      <Button title="破解" onPress={handleClickTitle} style={{marginBottom: 5, marginTop: 5}}/>
+      <Button title="返回" onPress={handleClick} />
+      <WebView ref={webView} source={{uri: webUri}} onNavigationStateChange={handleOnLoad}/>
     </Fragment>
   );
 };
@@ -120,6 +126,14 @@ const styles = StyleSheet.create({
     paddingRight: 12,
     textAlign: 'right',
   },
+  picker: {
+      flex: 1,
+      padding: 0,
+      height: 32,
+  },
+  button: {
+    margin: 10,
+  }
 });
 
 export default App;
