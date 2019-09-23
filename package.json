@@ -9,6 +9,7 @@
   "dependencies": {
     "react": "16.8.6",
     "react-native": "0.60.5",
+    "react-native-android-fullscreen-webview-video": "^1.0.4",
     "react-native-webview": "^7.1.0"
   },
   "devDependencies": {

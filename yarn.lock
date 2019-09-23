@@ -4867,6 +4867,11 @@ react-is@^16.8.1, react-is@^16.8.4, react-is@^16.8.6:
   resolved "https://registry.npm.taobao.org/react-is/download/react-is-16.9.0.tgz?cache=0&sync_timestamp=1568742277284&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Freact-is%2Fdownload%2Freact-is-16.9.0.tgz#21ca9561399aad0ff1a7701c01683e8ca981edcb"
   integrity sha1-IcqVYTmarQ/xp3AcAWg+jKmB7cs=
 
+react-native-android-fullscreen-webview-video@^1.0.4:
+  version "1.0.4"
+  resolved "http://r.cnpmjs.org/react-native-android-fullscreen-webview-video/download/react-native-android-fullscreen-webview-video-1.0.4.tgz#b1ce0cc26033d50335d110f017eb0fe8a53bcd37"
+  integrity sha1-sc4MwmAz1QM10RDwF+sP6KU7zTc=
+
 react-native-webview@^7.1.0:
   version "7.1.0"
   resolved "https://registry.npm.taobao.org/react-native-webview/download/react-native-webview-7.1.0.tgz#f05327e7f807c7897baac490c997f10bc108c59a"

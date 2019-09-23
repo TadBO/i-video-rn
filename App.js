@@ -8,23 +8,11 @@
 
 import React, {Fragment, useState, useRef, useEffect} from 'react';
 import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
-
-import {
-  Header,
-  LearnMoreLinks,
   Colors,
-  DebugInstructions,
-  ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import { Button, Picker } from 'react-native';
-import { WebView } from 'react-native-webview';
+import { StyleSheet, Button, Picker } from 'react-native';
+// import { WebView } from 'react-native-webview';
+import WebView from 'react-native-android-fullscreen-webview-video';
 import { source } from "./utils";
 
 const App = () => {
@@ -64,9 +52,7 @@ const App = () => {
   }
   return (
     <Fragment>
-      <Picker style={{
-          marginTop: 10,
-      }} mode="dropdown" selectedValue={uri} onValueChange={handleChannelChange}>
+      <Picker  mode="dropdown" selectedValue={uri} onValueChange={handleChannelChange}>
           {
             platformlist.map((item, index) => {
               return <Picker.Item key={index} label={item.name} value={item.url} />
@@ -82,8 +68,8 @@ const App = () => {
               })
           }
       </Picker>
-      <Button title="破解" onPress={handleClickTitle} style={{marginBottom: 5, marginTop: 5}}/>
-      <Button title="返回" onPress={handleClick} />
+      <Button title="破解" onPress={handleClickTitle} style={{marginTop: 10}}/>
+      <Button title="返回" onPress={handleClick} style={{marginTop: 10}} />
       <WebView ref={webView} source={{uri: webUri}} onNavigationStateChange={handleOnLoad}/>
     </Fragment>
   );
