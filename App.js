@@ -10,24 +10,22 @@ import React, {Fragment, useState, useRef, useEffect} from 'react';
 import {
     Colors,
 } from 'react-native/Libraries/NewAppScreen';
-import {StyleSheet, Button, Picker, View, Text} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {WebView} from 'react-native-webview';
-import Drawer from 'react-native-drawer';
+import { Picker,  Dialog, Button,View, Text  } from 'react-native-ui-lib';
 import ActionButton from 'react-native-action-button';
-import { SimpleItemsDialog } from 'react-native-pickers';
 import {source} from "./utils";
 
 const App = () => {
-    // const [uri, setUrI] = useState('');
+    const [visible, setVisible] = useState(false);
     const [selectUrI, setSelectUrI] = useState('');
+    const [uri, setUri] = useState('https://m.v.qq.com/');
     const [webUri, setWebUri] = useState('https://m.v.qq.com/');
     const [currentUrl, setCurrentUrl] = useState('');
     const [platformlist, setPlatformlist] = useState([]);
     const [list, setList] = useState([]);
     const [canGoBack, setCanGOBack] = useState(false);
-    const [canGoForward, setCanGoForward] = useState(false);
     const webView = new useRef(null);
-    const Drawer = new useRef(null);
     useEffect(() => {
         source.getAllList().then(({data}) => {
             const {platformlist, list} = data;
@@ -37,31 +35,28 @@ const App = () => {
     }, []);
     // 返回
     const handleClick = () => {
-        // setUrI('https://m.youku.com/');
-        webView.current.goBack();
+        const newUrl = /\?url=/.test(webUri) ? webUri.split('?url=')[1] : webUri;
+        setWebUri(newUrl);
     }
     // 当视频源切换的时候
-    const handleChannelChange = (index) => {
-        const newList = platformlist[index];
-        const { url } = newList;
-        // setUrI(url);
+    const handleChannelChange = (e) => {
         // 视频源切换时解析源置空
+        const { value } = e;
         setSelectUrI('');
-        setWebUri(url);
-        Drawer.current.close();
+        setWebUri(value);
+        setUri(value);
+        setVisible(false);
     };
     // 解析源更改时
-    const handelSourceChange = (index) => {
-        const newList = list[index];
-        const { url } = newList;
-        setSelectUrI(url);
+    const handelSourceChange = (e) => {
+        const { value } = e;
+        setSelectUrI(value);
     };
     // webview 的地址发生改变的时候，缓存当前的url,用于解析
     const handleOnLoad = (e) => {
-        const { url, canGoBack, canGoForward  } = e;
+        const { url, canGoBack  } = e;
         setCurrentUrl(url);
         setCanGOBack(canGoBack);
-        setCanGoForward(canGoForward);
     };
     // 解析时触发
     const handleClickTitle = () => {
@@ -69,7 +64,7 @@ const App = () => {
         const preUrl = /\?url=/.test(currentUrl) ? currentUrl.split('?url=')[1] : currentUrl;
         const newUri = `${selectUrI}${preUrl}`;
         setWebUri(newUri);
-        Drawer.current.close();
+        setVisible(false);
     }
     // 前进
     const handlegoClick = () => {
@@ -77,49 +72,37 @@ const App = () => {
     }
     // 打开控制页
     const handleSetting = () => {
-        Drawer.current.open();
+       setVisible(true);
     }
-    const Content = (
-        <Fragment>
-            <View>
-                <Text>切换不同的视频源，可以找到更多你想看的内容哦~</Text>
-            </View>
-            <SimpleItemsDialog items={platformlist} itemKey="name" onPress={handleChannelChange} />
-            {/*<Picker mode="dropdown" selectedValue={uri} onValueChange={handleChannelChange}>*/}
-            {/*    {*/}
-            {/*        platformlist.map((item, index) => {*/}
-            {/*            return <Picker.Item key={index} label={item.name} value={item.url}/>*/}
-            {/*        })*/}
-            {/*    }*/}
-            {/*</Picker>*/}
-            <View>
-                <Text>多切换几条解析源，可以提高破解几率0~</Text>
-            </View>
-            {/*<Picker style={{*/}
-            {/*    marginTop: 10,*/}
-            {/*}} mode="dropdown" selectedValue={selectUrI} onValueChange={handelSourceChange}>*/}
-            {/*    {*/}
-            {/*        list.map((item, index) => {*/}
-            {/*            return <Picker.Item key={index} label={item.name} value={item.url}/>*/}
-            {/*        })*/}
-            {/*    }*/}
-            {/*</Picker>*/}
-            <SimpleItemsDialog items={list} itemKey="name" onPress={handelSourceChange}/>
-            <Button title="破解" onPress={handleClickTitle} style={{marginTop: 10}}/>
-        </Fragment>
-    );
     return (
         <Fragment>
-            <Drawer
-                content={Content}
-                ref={Drawer}
-            >
-                <ActionButton onPress={handleSetting} buttonColor="rgba(231,76,60,1)"></ActionButton>
-                {canGoBack && <Button title="返回" onPress={handleClick} style={{marginTop: 10}}/>}
-                {canGoForward &&  <Button title="前进" onPress={handlegoClick} style={{marginTop: 10}}/>}
+            <View style={{flex: 1}}>
                 <WebView mixedContentMode="compatibility" allowsFullscreenVideo={true} ref={webView} source={{uri: webUri}} onNavigationStateChange={handleOnLoad}/>
-            </Drawer>
-
+                <ActionButton onPress={handleSetting} buttonColor="rgba(231,76,60,1)" position="left"></ActionButton>
+            </View>
+            <Dialog useSafeArea visible={visible} onDismiss={() => {setVisible(false)}}   height="40%">
+               <View useSafeArea style={{ backgroundColor: '#fff', padding: 10}}>
+                   <Text>切换不同的视频源，可以找到更多你想看的内容哦~</Text>
+                   <Picker useSafeArea onChange={handleChannelChange}   style={{marginTop: 10}} value={uri} >
+                       {
+                           platformlist.map((item, index) => {
+                               return <Picker.Item key={index} label={item.name} value={item.url} />
+                           })
+                       }
+                   </Picker>
+                   <Text>多切换几条解析源，可以提高破解几率哦~</Text>
+                   <Picker useSafeArea onChange={handelSourceChange} value={selectUrI} style={{marginTop: 10}}>
+                       {
+                           list.map((item, index) => {
+                               return <Picker.Item key={index} label={item.name} value={item.url}/>
+                           })
+                       }
+                   </Picker>
+                   <Text>选择解析源后破解哦~</Text>
+                   <Button disabled={!selectUrI} label="破解" onPress={handleClickTitle} style={{marginTop: 10}}/>
+                   {canGoBack && /\?url=/.test(webUri) && <Button label="返回原视频" onPress={handleClick} style={{marginTop: 10}}/>}
+               </View>
+            </Dialog>
         </Fragment>
     );
 };
